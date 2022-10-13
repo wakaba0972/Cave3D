@@ -1,20 +1,21 @@
 int r;
 int h;
 int rows;
-int cols;
+int cols; //Customize
 float scl;
 float sclRad;
 float curRad;
+float radians[];
 float terrain[][];
-float flying = 0;
+float flying = 0; //Customize
 float xoff, yoff, zoff;
 
 void setTerrain() {
   zoff = flying;
   for (int y=0; y<rows-1; y++) {
     for (int x=0; x<cols+1; x++) {
-      xoff = (float)Math.sin(x*sclRad);
-      yoff = (float)Math.cos(x*sclRad);
+      xoff = (float)Math.sin(radians[x]);
+      yoff = (float)Math.cos(radians[x]);
       terrain[x][y] = map(noise(xoff+100, yoff+100, zoff), 0, 1, -500, 500);
     }
     zoff += 0.15;
@@ -35,6 +36,11 @@ void setup() {
   rows = Math.round(h / scl);
 
   terrain = new float[cols+1][rows];
+  radians = new float[cols+1];
+  
+  for(int x=0; x<cols+1; x++){
+    radians[x] = curRad = x*sclRad;
+  }
 }
 
 void draw() {
@@ -52,9 +58,8 @@ void draw() {
     beginShape(TRIANGLE_STRIP);
     fill(Math.round(100 * y/(rows-1)));
     for (int x=0; x < cols+1; x++) {
-      curRad = x*sclRad;
-      vertex(Math.round(r*Math.sin(curRad) + terrain[x][y]*Math.cos(curRad)), y*scl, Math.round(r*Math.cos(curRad) + terrain[x][y]*Math.sin(curRad)));
-      vertex(Math.round(r*Math.sin(curRad) + terrain[x][y+1]*Math.cos(curRad)), (y+1)*scl, Math.round(r*Math.cos(curRad) + terrain[x][y+1]*Math.sin(curRad)));
+      vertex(Math.round(r*Math.sin(radians[x]) + terrain[x][y]*Math.cos(radians[x])), y*scl, Math.round(r*Math.cos(radians[x]) + terrain[x][y]*Math.sin(radians[x])));
+      vertex(Math.round(r*Math.sin(radians[x]) + terrain[x][y+1]*Math.cos(radians[x])), (y+1)*scl, Math.round(r*Math.cos(radians[x]) + terrain[x][y+1]*Math.sin(radians[x])));
     }
     endShape();
   }
